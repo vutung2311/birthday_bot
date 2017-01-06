@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/ui/statics/css/w3.css">
+    <link rel="stylesheet" href="/ui/statics/css/ionicons.min.css">
+    <title>Birthday Bot</title>
+    <style>
+        #register {
+            margin: 0 auto;
+            margin-top: 250px;
+        }
+    </style>
+</head>
+<body>
+<div class="w3-row-padding w3-margin-top">
+    <div id="register" class="w3-card-4" style="max-width: 600px">
+        <div class="">
+            <div class="w3-container w3-teal">
+                <h2>Register</h2>
+            </div>
+            <form action="/register" method="post" class="w3-container" id="register-form">
+                <label class="w3-label">Username</label>
+                <input type="text" class="w3-input" name="username" required>
+                <label class="w3-label">Password</label>
+                <input type="password" class="w3-input" name="password" required>
+                <label class="w3-label">Password again</label>
+                <input type="password" class="w3-input" name="passwordAgain" required>
+                <!-- role -->
+                <input type="radio" class="w3-radio" name="role" value="1">
+                <label class="w3-validate">Admin</label>
+                <input type="radio" class="w3-radio" name="role" value="2" checked>
+                <label class="w3-validate">Viewer</label>
+                <div class="w3-right w3-margin-top w3-margin-bottom">
+                    <button class="w3-btn w3-teal" type="submit">Register</button>
+                    <a href="/login">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    const registerForm = document.getElementById('register-form');
+    registerForm.onsubmit = function () {
+        if (this.elements["password"].value !== this.elements['passwordAgain'].value) {
+            alert("Password not match");
+            return false;
+        }
+    }
+</script>
+</html>

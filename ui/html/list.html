@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/ui/statics/css/w3.css">
+    <link rel="stylesheet" href="/ui/statics/css/ionicons.min.css">
+    <title>Birthday Bot</title>
+    <style>
+        .hoverbtn:hover {
+            font-weight: bold;
+            opacity: 0.4;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="w3-row-padding">
+    <div class="w3-card-2 w3-margin-top">
+        <header class="w3-container w3-center w3-teal">
+            <div class="w3-row">
+                <div class="w3-half">
+                    <h3 class="w3-right">Birthday List</h3>
+                </div>
+                <div class="w3-half w3-text-right">
+                    <div class="w3-right">
+                        <a href="#" onclick="document.getElementById('create-form').style.display='block'">
+                            <i class="icon ion-ios-plus-outline w3-xxlarge hoverbtn"></i>
+                        </a>
+                        <a href="#" onclick="document.getElementById('upload-form').style.display='block'">
+                            <i class="icon ion-ios-upload-outline w3-xxlarge hoverbtn"></i>
+                        </a>
+                        <a href="/export">
+                            <i class="icon ion-ios-download-outline w3-xxlarge hoverbtn"></i>
+                        </a>
+                        <a href="/logout">
+                            <i class="icon ion-log-out w3-xxlarge hoverbtn"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <table class="w3-table w3-centered w3-border w3-bordered w3-hoverable">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Birthday</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $index, $bd := .}}
+                <tr>
+                    <td>{{$bd.Id}}</td>
+                    <td>{{$bd.PersonName}}</td>
+                    <td>{{$bd.Birthday.Format "2006-01-02"}}</td>
+                    <td>
+                        <button class="w3-btn w3-teal" onclick="updateBirthday(this);">Modify</button>
+                        <button class="w3-btn w3-red" onclick="deleteBirthday(this)">Delete</button>
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Modals -->
+<div class="w3-container">
+    <div id="create-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Add new birthday</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('create-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/create" method="post">
+                <label class="w3-label">Person Name</label>
+                <input class="w3-input" type="text" name="PersonName" value="">
+                <label class="w3-label">Birth day</label>
+                <input class="w3-input" type="date" name="Birthday" value="">
+                <button class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" type="submit">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Modals -->
+<div class="w3-container">
+    <div id="edit-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Edit birthday</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('edit-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/update" method="post">
+                <input type="hidden" name="Id" id="birthdayIdToUpdate">
+                <label class="w3-label">Person Name</label>
+                <input class="w3-input" type="text" name="PersonName" id="personNameToUpdate" value="">
+                <label class="w3-label">Birthday</label>
+                <input class="w3-input" type="date" name="Birthday" id="birthdayToUpdate" value="">
+                <button class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" type="submit">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Upload Modals -->
+<div class="w3-container">
+    <div id="upload-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Import birthdays</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('upload-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/import" method="post" enctype="multipart/form-data">
+                <label class="w3-label">Upload a json file</label>
+                <input class="w3-input" type="file" name="birthdayJsonFile"  value="">
+                <button class="w3-btn w3-teal w3-margin-top w3-margin-bottom w3-right" type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Delete Modals -->
+<div class="w3-container">
+    <div id="delete-form" class="w3-modal">
+        <div class="w3-modal-content w3-card-8 w3-animate-zoom" style="max-width: 600px;">
+            <!-- head -->
+            <div class="w3-container w3-teal">
+                <h2>Are you sure?</h2>
+                <span class="w3-closebtn w3-hover-red w3-container w3-padding-8 w3-display-topright"
+                      onclick="document.getElementById('delete-form').style.display='none'">&times;</span>
+            </div>
+
+            <form class="w3-container" action="/delete" method="post">
+                <input type="hidden" name="Id" id="birthdayIdToDelete">
+                <div class="w3-center">
+                    <button class="w3-btn w3-red w3-margin-top w3-margin-bottom" type="submit">Delete</button>
+                    <button type="button" class="w3-btn w3-teal w3-margin-top w3-margin-bottom"
+                            onclick="document.getElementById('delete-form').style.display='none'">Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateBirthday(e) {
+        const editForm = document.getElementById('edit-form');
+        editForm.style.display = 'block';
+        document.getElementById('birthdayIdToUpdate').value = e.parentNode.parentNode.querySelector('td:nth-child(1)').innerText;
+        document.getElementById('personNameToUpdate').value = e.parentNode.parentNode.querySelector('td:nth-child(2)').innerText;
+        document.getElementById('birthdayToUpdate').value = e.parentNode.parentNode.querySelector('td:nth-child(3)').innerText;
+    }
+
+    function deleteBirthday(e) {
+        const deleteForm = document.getElementById('delete-form');
+        deleteForm.style.display = 'block';
+        document.getElementById('birthdayIdToDelete').value = e.parentNode.parentNode.querySelector('td:nth-child(1)').innerText;
+    }
+</script>
+</body>
+</html>
